@@ -1,11 +1,12 @@
 'use client'
 
 import React, { useEffect } from 'react'
+import Image from 'next/image'
 import useMyStore from '@/store/useMyStore'
 import { toast, ToastContainer } from 'react-toastify'
-import { Trash } from 'lucide-react'
+import { Heart, Trash } from 'lucide-react'
 
-const page = () => {
+const Page = () => {
   const success = () => {
     toast.success("Added to cart succesfully !", {
       position: "top-right"
@@ -17,14 +18,14 @@ const page = () => {
       position: "top-right"
     });
   };
-  
+
   const deleteSucces = () => {
     toast.success("Product has deleted succesfully !", {
       position: "top-right"
     });
   };
 
-  const { products, isLoading, fetchData, homeLabel, deleteFunc, deleteData } = useMyStore()
+  const { products, isLoading, fetchData, homeLabel, deleteFunc, deleteData, searchInputValue } = useMyStore()
 
   useEffect(() => {
     fetchData()
@@ -50,14 +51,17 @@ const page = () => {
     deleteSucces()
     deleteData(id)
     deleteFunc()
-  } 
+  }
 
-  const filteredData = homeLabel === "All" ? products : products.filter((item) => item.category === homeLabel)
+  let filteredData = homeLabel === "All" ? products : products.filter((item) => item.category === homeLabel)
+  if (searchInputValue) {
+    filteredData = filteredData.filter((item) => item.title.toLowerCase().includes(searchInputValue.toLowerCase()))
+  }
 
   return (
     <div className='flex flex-col gap-4 w-full'>
       <ToastContainer />
-      <h1 className='text-white text-[24px] font-medium'>{homeLabel === "All" ? "All Products" : homeLabel}</h1>
+      <h1 className='text-white flex gap-2 items-center text-[24px] font-medium'>{homeLabel === "All" ? "All Products" : homeLabel} <p className='rounded-full flex justify-center items-center w-9 h-9 text-[18px] bg-white/40 '>{filteredData.length}</p> {searchInputValue && <p className='text-red-600 inline'>{searchInputValue}</p>}</h1>
 
       <div className='grid grid-cols-[repeat(5,242px)] justify-between w-full gap-5'>
         {filteredData.map(item => (
@@ -65,8 +69,17 @@ const page = () => {
             key={item.id}
             className='w-full h-120 flex p-2 flex-col gap-1.5 bg-linear-to-tr from-white/25 rounded-lg'
           >
-            <div className='w-full rounded-lg h-160 overflow-hidden'>
-              <img src={item.image} className='w-full rounded-t-lg transition-all cursor-pointer ease-in duration-150 hover:scale-105 h-full object-cover' />
+            <div className='w-full relative rounded-lg h-160 overflow-hidden'>
+              <Image 
+                src={item.image} 
+                alt={item.title || 'Product image'}
+                fill
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                className='rounded-t-lg transition-all cursor-pointer ease-in duration-150 hover:scale-105 object-cover' 
+              />
+              <div className='absolute top-1.5 right-1.5 cursor-pointer p-1.5 rounded-full bg-gray-300/50 backdrop-blur-xs shadow-sm'>
+                <Heart className='' />
+              </div>
             </div>
 
             <div className='w-full h-full flex flex-col justify-between'>
@@ -94,4 +107,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

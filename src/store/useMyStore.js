@@ -8,6 +8,7 @@ const useMyStore = create((set, get) => ({
     isLoading: false,
     homeLabel: "All",
     deleteId: null,
+    searchInputValue: "",
 
     fetchData: async () => {
         set({ isLoading: true })
@@ -25,13 +26,13 @@ const useMyStore = create((set, get) => ({
         if (!deleteId) return
         try {
             await axios.delete(`${BASE_URL}/${deleteId}`)
-            // Update local state by filtering out the deleted item
             set({ products: products.filter(p => p.id !== deleteId), deleteId: null })
         } catch (error) {
             console.error('Error deleting product:', error)
         }
     },
 
+    setSearchInputValue: (value) => set({searchInputValue: value}),
     deleteData: (id) => set({ deleteId: id }),
     setHomeLabel: (value) => set({ homeLabel: value }),
 }))

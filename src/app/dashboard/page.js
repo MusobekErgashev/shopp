@@ -1,8 +1,9 @@
 'use client'
 
 import { Menu } from '@headlessui/react'
+import Image from 'next/image'
 import axios from 'axios'
-import { ChevronDownIcon } from 'lucide-react'
+import { ChevronDownIcon, Loader2 } from 'lucide-react'
 import React, { useState } from 'react'
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -10,7 +11,7 @@ import "react-toastify/dist/ReactToastify.css";
 const BASE_URL = "https://695cf4cb79f2f34749d6795e.mockapi.io/shopping/products"
 const today = new Date().toDateString()
 
-const page = () => {
+const Page = () => {
   const success = () => {
     toast.success("Product has been added succesfully!", {
       position: "top-center"
@@ -28,11 +29,13 @@ const page = () => {
   const [image, setImage] = useState("")
   const [category, setCategory] = useState("")
   const [price, setPrice] = useState()
+  const [loading, setLoading] = useState(false)
 
   function postData(e) {
     e.preventDefault()
 
-    if (title && description && image && category && price) {
+    if ((title && description && image && category && price) && !loading) {
+      setLoading(true)
       axios.post(BASE_URL, {
         createdAt: today,
         title,
@@ -49,7 +52,8 @@ const page = () => {
         setCategory("")
         setPrice("")
       }).catch((err) => console.log(err))
-    } else {
+      .finally(() => setLoading(false))
+    } else if (!title || !description || !image || !category || !price) {
       warning()
     }
   }
@@ -64,7 +68,7 @@ const page = () => {
           <div className="w-full h-11 relative flex rounded-xl">
             <textarea
               maxLength={25}
-
+              minLength={5}
               className="peer w-full bg-[white] h-full flex overflow-hidden py-2.5 resize-none outline-none px-3 text-[14px] text-[#0F172B] rounded-md border border-[#006EDD]"
               id="title"
               type="text"
@@ -84,7 +88,7 @@ const page = () => {
           <div className="w-full min-h-11 relative flex rounded-xl">
             <textarea
               maxLength={100}
-
+              minLength={10}
               className={`${description ? "h-21" : "h-11"} peer w-full resize-none transition-all bg-white outline-none py-2 focus:h-21 appearance-none px-3 text-[14px] text-[#0F172B] rounded-md border border-[#006EDD]`}
               id="description"
               value={description}
@@ -102,7 +106,6 @@ const page = () => {
 
           <div className="w-full h-11 relative flex rounded-xl">
             <input
-
               className="peer w-full bg-white outline-none px-3 text-[14px] text-[#0F172B] rounded-md border border-[#006EDD]"
               id="image"
               type="text"
@@ -174,7 +177,6 @@ const page = () => {
 
           <div className="w-full h-11 relative flex rounded-xl">
             <input
-
               className="peer w-full bg-white outline-none px-3 text-[14px] text-[#0F172B] rounded-md border border-[#006EDD]"
               id="price"
               type="number"
@@ -191,9 +193,12 @@ const page = () => {
             </label>
           </div>
 
-          <button className="w-full mt-5 justify-center h-11 items-center text-white cursor-pointer flex rounded-md bg-[#006EDD]">
-            Add Product
-          </button>
+          <div className='flex flex-col gap-2'>
+            <button disabled={loading} className={`w-full justify-center h-11 items-center text-white flex rounded-md bg-[#006EDD] ${loading ? "opacity-50 cursor-not-allowed" : "cursor-pointer"}`}>
+              Add Product
+              <Loader2 className={`animate-spin ml-2 ${loading ? "" : "hidden"}`} />
+            </button>
+          </div>
         </form>
       </div>
 
@@ -204,8 +209,8 @@ const page = () => {
           <div
             className='w-60.5 h-120 flex blur-xs p-2 flex-col gap-1.5 bg-linear-to-tr from-white/25 opacity-60 rounded-lg'
           >
-            <div className='w-full rounded-lg h-160 overflow-hidden'>
-              <img src={"https://www.warmoven.in/cdn/shop/files/duel-delight-chocolate_-cake.jpg?v=1749833568&width=1080"} className='w-full rounded-t-lg transition-all ease-in duration-150 h-full object-cover' />
+            <div className='w-full relative rounded-lg h-160 overflow-hidden'>
+              <Image src={"https://www.warmoven.in/cdn/shop/files/duel-delight-chocolate_-cake.jpg?v=1749833568&width=1080"} alt="Cake" fill sizes="(max-width: 768px) 100vw, 33vw" className='rounded-t-lg transition-all ease-in duration-150 object-cover' />
             </div>
 
             <div className='w-full h-full flex flex-col justify-between'>
@@ -228,8 +233,8 @@ const page = () => {
           <div
             className='w-60.5 h-120 flex p-2 flex-col gap-1.5 bg-linear-to-tr from-white/25 rounded-lg'
           >
-            <div className='w-full rounded-lg h-160 overflow-hidden'>
-              <img src={image || "https://blog.3bee.com/_next/image/?url=https%3A%2F%2Fapi-backend-assets.s3.eu-south-1.amazonaws.com%2Fprivate%2Ffiler_public%2Fb8%2F5c%2Fb85c004f-8f5d-4b6c-ab70-25051c3fb9ba%2F11496fd2-2abf-4037-8b09-9627a1e60a3c.jpg&w=3840&q=75"} className='w-full rounded-t-lg transition-all cursor-pointer ease-in duration-150 hover:scale-105 h-full object-cover' />
+            <div className='w-full relative rounded-lg h-160 overflow-hidden'>
+              <Image src={image || "https://blog.3bee.com/_next/image/?url=https%3A%2F%2Fapi-backend-assets.s3.eu-south-1.amazonaws.com%2Fprivate%2Ffiler_public%2Fb8%2F5c%2Fb85c004f-8f5d-4b6c-ab70-25051c3fb9ba%2F11496fd2-2abf-4037-8b09-9627a1e60a3c.jpg&w=3840&q=75"} alt="Product preview" fill sizes="(max-width: 768px) 100vw, 33vw" className='rounded-t-lg transition-all cursor-pointer ease-in duration-150 hover:scale-105 object-cover' />
             </div>
 
             <div className='w-full h-full flex flex-col justify-between'>
@@ -252,8 +257,8 @@ const page = () => {
           <div
             className='w-60.5 h-120 flex blur-xs p-2 flex-col gap-1.5 bg-linear-to-tr from-white/25 opacity-60 rounded-lg'
           >
-            <div className='w-full rounded-lg h-160 overflow-hidden'>
-              <img src={"https://api.idea.uz/storage/products/February2025/H6D2lV7hFNHW2vfvMFCk.png"} className='w-full rounded-t-lg transition-all ease-in duration-150 h-full object-cover' />
+            <div className='w-full relative rounded-lg h-160 overflow-hidden'>
+              <Image src={"https://api.idea.uz/storage/products/February2025/H6D2lV7hFNHW2vfvMFCk.png"} alt="Samsung s25ultra" fill sizes="(max-width: 768px) 100vw, 33vw" className='rounded-t-lg transition-all ease-in duration-150 object-cover' />
             </div>
 
             <div className='w-full h-full flex flex-col justify-between'>
@@ -278,4 +283,4 @@ const page = () => {
   )
 }
 
-export default page
+export default Page

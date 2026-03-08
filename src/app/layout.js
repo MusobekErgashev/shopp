@@ -11,7 +11,7 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <Header />
-        <div className="px-20 py-15 mt-7">
+        <div className="px-20 pt-15 mt-7">
           <QueryClientProvider client={queryClient}>
             {children}
           </QueryClientProvider>

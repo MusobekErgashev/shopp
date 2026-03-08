@@ -1,15 +1,19 @@
 'use client'
 
 import useMyStore from '@/store/useMyStore'
-import fetchStore from '@/store/useMyStore'
-import { GalleryVerticalEndIcon, Search } from 'lucide-react'
+import { GalleryVerticalEndIcon, PersonStanding, Search, ShoppingBag, ShoppingCartIcon, UserRound } from 'lucide-react'
 import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 
 const Header = () => {
-    const { setHomeLabel } = useMyStore()
+    const { setHomeLabel, setSearchInputValue } = useMyStore()
     const [openCategory, setOpenCategory] = useState(false)
     const [hoveCategory, setHoverCategory] = useState(false)
+    const [inputValue, setInputValue] = useState("")
+
+    useEffect(() => {
+        setSearchInputValue(inputValue)
+    }, [inputValue, setSearchInputValue])
 
     const categoryVal = [
         "Men's clothing",
@@ -39,8 +43,8 @@ const Header = () => {
                     <p className='text-[#071952] text-[16px] font-medium'>Category</p>
                 </div>
 
-                <form className='flex items-center bg-white/10 border border-white/35 w-120 px-3 gap-2 rounded-md'>
-                    <input type="text" placeholder='Search' className='w-full py-1.25 text-white border-r border-r-white/35 outline-0' />
+                <form onSubmit={(e) => e.preventDefault()} className='flex items-center bg-white/10 border border-white/35 w-130 px-3 gap-2 rounded-md'>
+                    <input value={inputValue} onChange={(e) => setInputValue(e.target.value)} type="text" placeholder='Search' className='w-full py-1.25 text-white border-r border-r-white/35 outline-0' />
                     <Search className='text-white cursor-pointer' />
                 </form>
 
@@ -65,10 +69,10 @@ const Header = () => {
             </div>
 
             <div className="flex gap-5">
-                <Link href={'/'} className='text-[16px] font-medium text-white'>Home</Link>
+                <Link href={'/'} className='text-[16px] font-medium text-white'>All Products</Link>
                 <Link href={'/dashboard'} className='text-[16px] font-medium text-white'>Dashboard</Link>
-                <Link href={'/cart'} className='text-[16px] font-medium text-white'>Cart</Link>
-                <Link href={'/profile'} className='text-[16px] font-medium text-white'>Profile</Link>
+                <Link href={'/cart'} className='text-[16px] font-medium text-white'><ShoppingCartIcon /></Link>
+                <Link href={'/profile'} className='text-[16px] font-medium text-white'><UserRound /></Link>
             </div>
         </div>
     )
