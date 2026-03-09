@@ -3,14 +3,16 @@
 import useMyStore from '@/store/useMyStore'
 import { GalleryVerticalEndIcon, PersonStanding, Search, ShoppingBag, ShoppingCartIcon, UserRound } from 'lucide-react'
 import Link from 'next/link'
+import Image from 'next/image'
 import React, { useEffect, useState } from 'react'
 
 const Header = () => {
-    const { setHomeLabel, setSearchInputValue } = useMyStore()
+    const { setHomeLabel, setSearchInputValue, products, searchInputValue } = useMyStore()
     const [openCategory, setOpenCategory] = useState(false)
     const [hoveCategory, setHoverCategory] = useState(false)
     const [inputValue, setInputValue] = useState("")
-
+    const [openSearch, setOpenSearch] = useState(false)
+    
     useEffect(() => {
         setSearchInputValue(inputValue)
     }, [inputValue, setSearchInputValue])
@@ -22,7 +24,11 @@ const Header = () => {
         "Electronics",
         "Food"
     ]
-
+    
+    const filteredData = searchInputValue 
+        ? products.filter((item) => item.title.toLowerCase().includes(searchInputValue.toLowerCase()))
+        : []
+    
     return (
         <div className='px-20 fixed top-0 left-0 z-50 w-full py-3 bg-linear-to-t from-indigo-500/25 backdrop-blur-3xl flex justify-between items-center'>
             <Link href={'/'} className='text-[22px] font-semibold text-white'>Shopp</Link>
@@ -43,9 +49,40 @@ const Header = () => {
                     <p className='text-[#071952] text-[16px] font-medium'>Category</p>
                 </div>
 
-                <form onSubmit={(e) => e.preventDefault()} className='flex items-center bg-white/10 border border-white/35 w-130 px-3 gap-2 rounded-md'>
-                    <input value={inputValue} onChange={(e) => setInputValue(e.target.value)} type="text" placeholder='Search' className='w-full py-1.25 text-white border-r border-r-white/35 outline-0' />
+                <form onSubmit={(e) => e.preventDefault()} className='flex relative items-center bg-white/10 border border-white/35 w-130 px-3 gap-2 rounded-md'>
+                    <input
+                        value={inputValue}
+                        onBlur={() => setTimeout(() => setOpenSearch(false), 200)}
+                        onFocus={() => setOpenSearch(true)}
+                        onChange={(e) => setInputValue(e.target.value)}
+                        type="text"
+                        placeholder='Search'
+                        className='w-full py-1.25 text-white border-r border-r-white/35 outline-0' />
                     <Search className='text-white cursor-pointer' />
+
+                    <div className={`${openSearch && searchInputValue && filteredData.length > 0 ? "h-max max-h-63 mt-1 py-1 shadow-xl" : "h-0"} transition-all absolute top-full left-0 z-50 w-full rounded-md overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden bg-white`}>
+                        {
+                            filteredData.map((item) => (
+                                <Link 
+                                    onClick={() => {
+                                        setOpenSearch(false); 
+                                        setInputValue("");
+                                    }}
+                                    href={`/details?id=${item.id}`}
+                                    key={item.id}
+                                    className='flex px-3 py-2 hover:bg-gray-100 transition-all items-center gap-3'
+                                >
+                                    <div className='w-10 h-10 shrink-0 relative'>
+                                        <Image src={item.image} alt={item.title || 'Product'} fill sizes="40px" className='rounded object-cover' />
+                                    </div>
+                                    <div className='flex flex-col'>
+                                        <p className='text-[14px] font-medium text-gray-800 line-clamp-1'>{item.title}</p>
+                                        <p className='text-[12px] text-gray-500'>${item.price}</p>
+                                    </div>
+                                </Link>
+                            ))
+                        }
+                    </div>
                 </form>
 
                 <div
@@ -70,6 +107,7 @@ const Header = () => {
 
             <div className="flex gap-5">
                 <Link href={'/'} className='text-[16px] font-medium text-white'>All Products</Link>
+                <Link href={'/favourites'} className='text-[16px] font-medium text-white'>Favourites</Link>
                 <Link href={'/dashboard'} className='text-[16px] font-medium text-white'>Dashboard</Link>
                 <Link href={'/cart'} className='text-[16px] font-medium text-white'><ShoppingCartIcon /></Link>
                 <Link href={'/profile'} className='text-[16px] font-medium text-white'><UserRound /></Link>

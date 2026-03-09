@@ -42,8 +42,7 @@ const Page = () => {
         description,
         image,
         category,
-        price,
-        likes: 0
+        price
       }).then(() => {
         success()
         setTitle("")
@@ -180,7 +179,7 @@ const Page = () => {
               className="peer w-full bg-white outline-none px-3 text-[14px] text-[#0F172B] rounded-md border border-[#006EDD]"
               id="price"
               type="number"
-              // value={price}
+              value={price}
               onChange={e =>
                 setPrice(e.target.value)
               }
