@@ -74,8 +74,8 @@ const Page = () => {
               >
                 <div className='w-full relative rounded-lg h-160 overflow-hidden'>
                   <Link href={`/details?id=${item.id}`}>
-                    <Image 
-                      src={imageSrc} 
+                    <Image
+                      src={imageSrc}
                       alt={item.title || 'Product image'}
                       fill
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -83,31 +83,32 @@ const Page = () => {
                       unoptimized={!isValidUrl(item.image)}
                     />
                   </Link>
-                <div 
-                  onClick={() => removeFromFavourites(item.id)} 
-                  className='absolute top-1.5 right-1.5 cursor-pointer p-1.5 rounded-full bg-white/70 backdrop-blur-xs shadow-sm transition-all hover:bg-gray-300'
-                >
-                  <Heart className='fill-red-500 text-red-500' />
-                </div>
-              </div>
-
-              <div className='w-full h-full flex flex-col justify-between'>
-                <div className='h-max rounded'>
-                  <h1 className='text-[18px] first-letter:capitalize wrap-break-word leading-7 text-white font-semibold'>{item.title}</h1>
-                  <p className='text-[14px] text-white/60 font-light leading-4 wrap-break-word'>{item.description}</p>
+                  <div
+                    onClick={() => removeFromFavourites(item.id)}
+                    className='absolute top-1.5 right-1.5 cursor-pointer p-1.5 rounded-full bg-white/70 backdrop-blur-xs shadow-sm transition-all hover:bg-gray-300'
+                  >
+                    <Heart className='fill-red-500 text-red-500' />
+                  </div>
                 </div>
 
-                <div className='flex flex-col gap-2.5'>
-                  <div className='flex items-center justify-between'>
-                    <h2 className='text-[18px] font-medium text-white'>${item.price}</h2>
-                    <p className='text-[12px] text-white py-1 px-2.5 bg-white/15 rounded-full'>#{item.category}</p>
+                <div className='w-full h-full flex flex-col justify-between'>
+                  <div className='h-max rounded'>
+                    <h1 className='text-[18px] first-letter:capitalize wrap-break-word leading-7 text-white font-semibold'>{item.title}</h1>
+                    <p className='text-[14px] text-white/60 font-light leading-4 wrap-break-word'>{item.description}</p>
                   </div>
 
-                  <button onClick={() => addToCart(item)} className='rounded-md flex items-center justify-center gap-2 bg-white/30 border-2 hover:bg-white/40 transition-all border-white/50 py-2 w-full text-white font-semibold cursor-pointer'><ShoppingBagIcon size={18} /> Add to Cart</button>
+                  <div className='flex flex-col gap-2.5'>
+                    <div className='flex items-center justify-between'>
+                      <h2 className='text-[18px] font-medium text-white'>${item.price}</h2>
+                      <p className='text-[12px] text-white py-1 px-2.5 bg-white/15 rounded-full'>#{item.category}</p>
+                    </div>
+
+                    <button onClick={() => addToCart(item)} className='rounded-md flex items-center justify-center gap-2 bg-white/30 border-2 hover:bg-white/40 transition-all border-white/50 py-2 w-full text-white font-semibold cursor-pointer'><ShoppingBagIcon size={18} /> Add to Cart</button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )})}
+            )
+          })}
         </div>
       )}
     </div>

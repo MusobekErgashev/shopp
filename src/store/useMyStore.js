@@ -5,19 +5,16 @@ const BASE_URL = 'https://shopp-backend-arrd.onrender.com/api/products'
 
 const useMyStore = create((set, get) => ({
     products: [],
-    isLoading: false,
     homeLabel: "All",
     deleteId: null,
     searchInputValue: "",
 
     fetchData: async () => {
-        set({ isLoading: true })
         try {
             const res = await axios.get(BASE_URL)
             set({ products: res.data.data || res.data, isLoading: false })
         } catch (error) {
             console.error('Error fetching data:', error)
-            set({ isLoading: false })
         }
     },
 
